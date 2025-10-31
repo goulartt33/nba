@@ -3,115 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Análise NBA - Telegram Bot</title>
+    <title>NBA Pro Analytics • Sistema Profissional</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link href="public/css/style.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fas fa-basketball-ball"></i> NBA Analysis Pro
+                <i class="fas fa-basketball-ball me-2"></i>
+                <strong>NBA PRO ANALYTICS</strong>
             </a>
+            <div class="navbar-text">
+                <span id="live-clock" class="badge bg-success"></span>
+            </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <!-- Main Container -->
+    <div class="container mt-5 pt-4">
         <!-- Header -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <h1><i class="fas fa-robot"></i> Sistema de Análise NBA</h1>
-                        <p class="mb-0">Análises profissionais em tempo real para apostas</p>
-                    </div>
+                <div class="hero-section text-center text-white">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="fas fa-chart-line me-2"></i>Sistema de Análise NBA
+                    </h1>
+                    <p class="lead">Análises em tempo real baseadas em dados oficiais da NBA</p>
                 </div>
             </div>
         </div>
 
-        <!-- Controles -->
+        <!-- System Controls -->
         <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5><i class="fas fa-cog"></i> Controles do Sistema</h5>
-                        <button class="btn btn-success mb-2" onclick="fetchGames()">
-                            <i class="fas fa-sync-alt"></i> Atualizar Dados
-                        </button>
-                        <button class="btn btn-warning mb-2" onclick="sendTestAnalysis()">
-                            <i class="fab fa-telegram"></i> Testar Telegram
-                        </button>
-                        <button class="btn btn-info mb-2" onclick="generateDailyReport()">
-                            <i class="fas fa-chart-line"></i> Relatório Diário
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5><i class="fas fa-info-circle"></i> Status do Sistema</h5>
-                        <div id="system-status">
-                            <span class="badge bg-success">Online</span>
-                            <p class="mt-2 mb-0" id="last-update">Última atualização: Carregando...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Jogos de Hoje -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-calendar-day"></i> Jogos de Hoje</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="games-loading" class="text-center">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Carregando...</span>
-                            </div>
-                        </div>
-                        <div id="games-container" class="row"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Análises e Estatísticas -->
-        <div class="row mt-4">
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-chart-bar"></i> Análise Detalhada</h5>
-                    </div>
+                <div class="card control-panel">
                     <div class="card-body">
-                        <div id="analysis-container">
-                            <p class="text-muted">Selecione um jogo para ver a análise detalhada</p>
+                        <h5 class="card-title">
+                            <i class="fas fa-sliders-h me-2"></i>Painel de Controle
+                        </h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-primary" onclick="fetchRealData()">
+                                <i class="fas fa-sync-alt me-2"></i>Buscar Dados Reais
+                            </button>
+                            <button class="btn btn-telegram" onclick="sendRealAnalysis()">
+                                <i class="fab fa-telegram me-2"></i>Enviar Análise
+                            </button>
+                            <button class="btn btn-info" onclick="generateRealReport()">
+                                <i class="fas fa-file-pdf me-2"></i>Relatório Completo
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-trophy"></i> Estatísticas Rápidas</h5>
+                <div class="card status-card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">Status do Sistema</h6>
+                        <div class="status-indicator live"></div>
+                        <small class="text-muted" id="system-status">Conectado à API NBA</small>
+                        <div class="mt-2">
+                            <span class="badge bg-success" id="api-status">API Online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Games -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card games-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-basketball-ball me-2"></i>Jogos da NBA
+                        </h5>
+                        <span class="badge bg-primary" id="games-count">0 jogos</span>
                     </div>
                     <div class="card-body">
-                        <div id="quick-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Total de Jogos Hoje:</span>
-                                <span class="stat-value" id="total-games">0</span>
+                        <div id="games-loading" class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Análises Enviadas:</span>
-                                <span class="stat-value" id="analyses-sent">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Precisão do Sistema:</span>
-                                <span class="stat-value" id="system-accuracy">78%</span>
+                            <p class="mt-2 text-muted">Conectando à API NBA...</p>
+                        </div>
+                        <div id="games-container" class="row g-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Section -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card analysis-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Análise Profissional
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="analysis-placeholder" class="text-center py-5">
+                            <i class="fas fa-magnifying-glass fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Selecione um jogo para ver a análise detalhada</p>
+                        </div>
+                        <div id="analysis-container"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Quick Stats -->
+                <div class="card stats-card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-gauge-high me-2"></i>Métricas Rápidas
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-item">
+                            <div class="stat-label">Jogos Hoje</div>
+                            <div class="stat-value" id="stat-games">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Análises Geradas</div>
+                            <div class="stat-value" id="stat-analyses">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Taxa de Acerto</div>
+                            <div class="stat-value" id="stat-accuracy">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Updates -->
+                <div class="card updates-card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-bolt me-2"></i>Atualizações em Tempo Real
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="updates-container">
+                            <div class="update-item">
+                                <small class="text-success">●</small>
+                                <span>Sistema conectado à API NBA</span>
                             </div>
                         </div>
                     </div>
@@ -119,25 +158,41 @@
             </div>
         </div>
 
-        <!-- Gráficos -->
+        <!-- Charts Section -->
         <div class="row mt-4">
             <div class="col-12">
-                <div class="card">
+                <div class="card charts-card">
                     <div class="card-header">
-                        <h5><i class="fas fa-chart-line"></i> Performance dos Times</h5>
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>Análise Visual
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <canvas id="statsChart" width="400" height="200"></canvas>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <canvas id="performanceChart" width="400" height="250"></canvas>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="comparisonChart" width="400" height="250"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 NBA Pro Analytics • Sistema profissional de análise de dados</p>
+        </div>
+    </footer>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="public/js/api.js"></script>
+    <script src="public/js/real-api.js"></script>
     <script src="public/js/charts.js"></script>
     <script src="public/js/script.js"></script>
 </body>
